@@ -7,15 +7,25 @@ Created on Sun Sep 12 16:46:37 2021
 
 import socket
 
-HEADER = 1024
+HEADER = 2048
 server_ip = socket.gethostbyname(socket.gethostname())
 server_port = 5050
 FORMAT = "utf-8"
-DISCONNECT_MESSAGE = "!DISCONNECT"
+DISCONNECT_MESSAGE = "quit"
 
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.connect((server_ip, server_port))
-sentence = input("Input your request : ")
+#sentence = input("Input your request : ")
+def take_input():
+    lines = []
+    while True:
+        line = input("Input : ")
+        if line:
+            lines.append(line)
+        else:
+            break
+    sentence = '\n'.join(lines)
+    return sentence
 
 def send_req(sentence):
     message = sentence.encode(FORMAT)
@@ -24,9 +34,16 @@ def send_req(sentence):
     send_length += b' ' * (HEADER - len(send_length))
     client_socket.send(send_length)
     client_socket.send(message)
-    print(client_socket.recv(1024).decode(FORMAT))
+    print(client_socket.recv(2048).decode(FORMAT))
 
-send_req(sentence)
+connected = True
+while connected:
+    sentence = take_input()
+    if sentence == 'quit':
+        break
+    else:
+        send_req(sentence)
+
 
 
 
